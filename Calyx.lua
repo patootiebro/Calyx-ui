@@ -2,31 +2,30 @@ local Library = {}
 Library.__index = Library
 
 local Theme = {
-    Background = Color3.fromRGB(28, 28, 34),
-    TabBar = Color3.fromRGB(20, 20, 25),
-    TabActive = Color3.fromRGB(42, 42, 52),
-    TabInactive = Color3.fromRGB(28, 28, 34),
-    TabHover = Color3.fromRGB(35, 35, 43),
-    Text = Color3.fromRGB(225, 225, 230),
-    TextDim = Color3.fromRGB(130, 130, 140),
-    Accent = Color3.fromRGB(72, 145, 255),
-    SwitchOn = Color3.fromRGB(72, 210, 120),
-    SwitchOff = Color3.fromRGB(55, 55, 62),
-    SliderTrack = Color3.fromRGB(45, 45, 52),
-    Dropdown = Color3.fromRGB(38, 38, 46),
-    DropdownHover = Color3.fromRGB(50, 50, 60),
-    Button = Color3.fromRGB(45, 45, 55),
-    ButtonHover = Color3.fromRGB(60, 60, 72),
-    SectionBg = Color3.fromRGB(33, 33, 40),
-    AnyTabBg = Color3.fromRGB(18, 18, 22),
-    Border = Color3.fromRGB(50, 50, 58),
+    Background = Color3.fromRGB(35, 35, 35),
+    TabBar = Color3.fromRGB(25, 25, 25),
+    TabActive = Color3.fromRGB(55, 55, 55),
+    TabInactive = Color3.fromRGB(35, 35, 35),
+    TabHover = Color3.fromRGB(45, 45, 45),
+    Text = Color3.fromRGB(220, 220, 220),
+    TextDim = Color3.fromRGB(140, 140, 140),
+    Accent = Color3.fromRGB(90, 150, 240),
+    SwitchOn = Color3.fromRGB(90, 150, 240),
+    SwitchOff = Color3.fromRGB(50, 50, 50),
+    SliderTrack = Color3.fromRGB(50, 50, 50),
+    Dropdown = Color3.fromRGB(45, 45, 45),
+    DropdownHover = Color3.fromRGB(60, 60, 60),
+    Button = Color3.fromRGB(55, 55, 55),
+    ButtonHover = Color3.fromRGB(70, 70, 70),
+    SectionBg = Color3.fromRGB(40, 40, 40),
+    AnyTabBg = Color3.fromRGB(20, 20, 20),
+    Border = Color3.fromRGB(70, 70, 70),
 }
 
-local Font = Enum.Font.Gotham
+local Font = Enum.Font.Code
 local TitleSize = 14
 local TextSize = 12
-local SmallSize = 11
-local CornerRad = 6
+local SmallSize = 12
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -36,15 +35,8 @@ local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local function Tween(obj, props, duration, style, direction)
-    local info = TweenInfo.new(duration or 0.25, style or Enum.EasingStyle.Quad, direction or Enum.EasingDirection.Out)
+    local info = TweenInfo.new(duration or 0.1, style or Enum.EasingStyle.Quad, direction or Enum.EasingDirection.Out)
     return TweenService:Create(obj, info, props)
-end
-
-local function AddCorner(parent, radius)
-    local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(0, radius or CornerRad)
-    c.Parent = parent
-    return c
 end
 
 local function AddStroke(parent, color, thickness)
@@ -109,76 +101,65 @@ function Library:Create(name, size, position)
     Main.BorderSizePixel = 0
     Main.ClipsDescendants = true
     Main.Parent = Gui
-    AddCorner(Main, 10)
     AddStroke(Main, Theme.Border, 1)
     MakeDraggable(Main)
 
-    local AccentLine = Instance.new("Frame")
-    AccentLine.Name = "AccentLine"
-    AccentLine.Size = UDim2.new(1, 0, 0, 2)
-    AccentLine.BackgroundColor3 = Theme.Accent
-    AccentLine.BorderSizePixel = 0
-    AccentLine.ZIndex = 5
-    AccentLine.Parent = Main
+    local TitleBar = Instance.new("Frame")
+    TitleBar.Name = "TitleBar"
+    TitleBar.Size = UDim2.new(1, 0, 0, 24)
+    TitleBar.BackgroundColor3 = Theme.TabBar
+    TitleBar.BorderSizePixel = 0
+    TitleBar.Parent = Main
 
-    local TabBar = Instance.new("Frame")
-    TabBar.Name = "TabBar"
-    TabBar.Size = UDim2.new(0, 135, 1, 0)
-    TabBar.BackgroundColor3 = Theme.TabBar
-    TabBar.BorderSizePixel = 0
-    TabBar.Parent = Main
-    AddCorner(TabBar, 10)
-
-    local TabBarClip = Instance.new("Frame")
-    TabBarClip.Name = "Clip"
-    TabBarClip.Size = UDim2.new(1, 0, 1, 0)
-    TabBarClip.BackgroundTransparency = 1
-    TabBarClip.ClipsDescendants = true
-    TabBarClip.Parent = TabBar
+    local TitleBottom = Instance.new("Frame")
+    TitleBottom.Size = UDim2.new(1, 0, 0, 1)
+    TitleBottom.Position = UDim2.new(0, 0, 1, 0)
+    TitleBottom.BackgroundColor3 = Theme.Border
+    TitleBottom.BorderSizePixel = 0
+    TitleBottom.Parent = TitleBar
 
     local Title = MakeLabel({
         Name = "Title",
-        Size = UDim2.new(1, -16, 0, 40),
-        Position = UDim2.new(0, 12, 0, 6),
+        Size = UDim2.new(1, -16, 1, 0),
+        Position = UDim2.new(0, 8, 0, 0),
         Text = name or "Calyx",
         TextSize = TitleSize,
         Font = Font,
         TextColor3 = Theme.Text,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
-    Title.Parent = TabBarClip
+    Title.Parent = TitleBar
 
-    local Sep = Instance.new("Frame")
-    Sep.Size = UDim2.new(1, -20, 0, 1)
-    Sep.Position = UDim2.new(0, 10, 0, 42)
-    Sep.BackgroundColor3 = Theme.Border
-    Sep.BorderSizePixel = 0
-    Sep.BackgroundTransparency = 0.5
-    Sep.Parent = TabBarClip
+    local TabBar = Instance.new("Frame")
+    TabBar.Name = "TabBar"
+    TabBar.Size = UDim2.new(0, 120, 1, -24)
+    TabBar.Position = UDim2.new(0, 0, 0, 24)
+    TabBar.BackgroundColor3 = Theme.TabBar
+    TabBar.BorderSizePixel = 0
+    TabBar.Parent = Main
+
+    local TabRight = Instance.new("Frame")
+    TabRight.Size = UDim2.new(0, 1, 1, 0)
+    TabRight.Position = UDim2.new(1, 0, 0, 0)
+    TabRight.BackgroundColor3 = Theme.Border
+    TabRight.BorderSizePixel = 0
+    TabRight.Parent = TabBar
 
     local TabList = Instance.new("Frame")
     TabList.Name = "TabList"
-    TabList.Size = UDim2.new(1, 0, 1, -52)
-    TabList.Position = UDim2.new(0, 0, 0, 52)
+    TabList.Size = UDim2.new(1, 0, 1, 0)
     TabList.BackgroundTransparency = 1
-    TabList.Parent = TabBarClip
+    TabList.Parent = TabBar
 
     local TabListLayout = Instance.new("UIListLayout")
     TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    TabListLayout.Padding = UDim.new(0, 3)
+    TabListLayout.Padding = UDim.new(0, 1)
     TabListLayout.Parent = TabList
-
-    local TabListPadding = Instance.new("UIPadding")
-    TabListPadding.PaddingLeft = UDim.new(0, 6)
-    TabListPadding.PaddingRight = UDim.new(0, 6)
-    TabListPadding.PaddingTop = UDim.new(0, 4)
-    TabListPadding.PaddingBottom = UDim.new(0, 6)
-    TabListPadding.Parent = TabList
 
     local ContentArea = Instance.new("Frame")
     ContentArea.Name = "ContentArea"
-    ContentArea.Size = UDim2.new(1, -135, 1, 0)
-    ContentArea.Position = UDim2.new(0, 135, 0, 0)
+    ContentArea.Size = UDim2.new(1, -120, 1, -24)
+    ContentArea.Position = UDim2.new(0, 120, 0, 24)
     ContentArea.BackgroundTransparency = 1
     ContentArea.ClipsDescendants = true
     ContentArea.Parent = Main
@@ -215,7 +196,7 @@ function Library:Tab(name, anytab)
 
     local Btn = Instance.new("TextButton")
     Btn.Name = "Tab_" .. name
-    Btn.Size = UDim2.new(1, 0, 0, 30)
+    Btn.Size = UDim2.new(1, 0, 0, 26)
     Btn.BackgroundColor3 = Theme.TabInactive
     Btn.BorderSizePixel = 0
     Btn.Text = "  " .. name
@@ -226,16 +207,23 @@ function Library:Tab(name, anytab)
     Btn.AutoButtonColor = false
     Btn.LayoutOrder = order
     Btn.Parent = self.TabList
-    AddCorner(Btn, 6)
+
+    local ActiveBar = Instance.new("Frame")
+    ActiveBar.Size = UDim2.new(0, 2, 1, 0)
+    ActiveBar.Position = UDim2.new(0, 0, 0, 0)
+    ActiveBar.BackgroundColor3 = Theme.Accent
+    ActiveBar.BorderSizePixel = 0
+    ActiveBar.BackgroundTransparency = 1
+    ActiveBar.Parent = Btn
 
     Btn.MouseEnter:Connect(function()
         if self.CurrentTab ~= name then
-            Tween(Btn, {BackgroundColor3 = Theme.TabHover}, 0.15):Play()
+            Tween(Btn, {BackgroundColor3 = Theme.TabHover}, 0.1):Play()
         end
     end)
     Btn.MouseLeave:Connect(function()
         if self.CurrentTab ~= name then
-            Tween(Btn, {BackgroundColor3 = Theme.TabInactive}, 0.15):Play()
+            Tween(Btn, {BackgroundColor3 = Theme.TabInactive}, 0.1):Play()
         end
     end)
 
@@ -258,24 +246,24 @@ function Library:Tab(name, anytab)
         Scroll.Name = "Scroll"
         Scroll.Size = UDim2.new(1, 0, 1, 0)
         Scroll.BackgroundTransparency = 1
-        Scroll.ScrollBarThickness = 3
-        Scroll.ScrollBarImageColor3 = Theme.Border
+        Scroll.ScrollBarThickness = 8
+        Scroll.ScrollBarImageColor3 = Color3.fromRGB(80, 80, 80)
         Scroll.BorderSizePixel = 0
         Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
         Scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
-        Scroll.ScrollBarImageTransparency = 0.4
+        Scroll.ScrollBarImageTransparency = 0
         Scroll.Parent = Content
 
         local Layout = Instance.new("UIListLayout")
         Layout.SortOrder = Enum.SortOrder.LayoutOrder
-        Layout.Padding = UDim.new(0, 6)
+        Layout.Padding = UDim.new(0, 2)
         Layout.Parent = Scroll
 
         local Pad = Instance.new("UIPadding")
-        Pad.PaddingTop = UDim.new(0, 12)
-        Pad.PaddingLeft = UDim.new(0, 12)
-        Pad.PaddingRight = UDim.new(0, 12)
-        Pad.PaddingBottom = UDim.new(0, 12)
+        Pad.PaddingTop = UDim.new(0, 4)
+        Pad.PaddingLeft = UDim.new(0, 4)
+        Pad.PaddingRight = UDim.new(0, 4)
+        Pad.PaddingBottom = UDim.new(0, 4)
         Pad.Parent = Scroll
 
         tabData.Scroll = Scroll
@@ -331,12 +319,15 @@ function Library:SelectTab(name)
     for _, tab in pairs(self.Tabs) do
         local active = (tab.Name == name)
         tab.ContentFrame.Visible = active
+        local bar = tab.Button:FindFirstChild("ActiveBar")
         if active then
-            Tween(tab.Button, {BackgroundColor3 = Theme.TabActive}, 0.2):Play()
+            Tween(tab.Button, {BackgroundColor3 = Theme.TabActive}, 0.1):Play()
             tab.Button.TextColor3 = Theme.Text
+            if bar then bar.BackgroundTransparency = 0 end
         else
-            Tween(tab.Button, {BackgroundColor3 = Theme.TabInactive}, 0.2):Play()
+            Tween(tab.Button, {BackgroundColor3 = Theme.TabInactive}, 0.1):Play()
             tab.Button.TextColor3 = Theme.TextDim
+            if bar then bar.BackgroundTransparency = 1 end
         end
     end
     self.CurrentTab = name
@@ -348,28 +339,28 @@ function Library:AddButton(tabData, text, callback)
 
     local Btn = Instance.new("TextButton")
     Btn.Name = "Button_" .. text
-    Btn.Size = UDim2.new(1, 0, 0, 34)
+    Btn.Size = UDim2.new(1, 0, 0, 24)
     Btn.BackgroundColor3 = Theme.Button
     Btn.BorderSizePixel = 0
     Btn.Text = text
     Btn.TextColor3 = Theme.Text
     Btn.Font = Font
-    Btn.TextSize = TextSize
+    Btn.TextSize = SmallSize
     Btn.AutoButtonColor = false
     Btn.LayoutOrder = tabData.ElementOrder
     Btn.Parent = parent
-    AddCorner(Btn)
+    AddStroke(Btn, Theme.Border, 1)
 
     Btn.MouseEnter:Connect(function()
-        Tween(Btn, {BackgroundColor3 = Theme.ButtonHover}, 0.15):Play()
+        Tween(Btn, {BackgroundColor3 = Theme.ButtonHover}, 0.1):Play()
     end)
     Btn.MouseLeave:Connect(function()
-        Tween(Btn, {BackgroundColor3 = Theme.Button}, 0.15):Play()
+        Tween(Btn, {BackgroundColor3 = Theme.Button}, 0.1):Play()
     end)
     Btn.MouseButton1Click:Connect(function()
-        Tween(Btn, {BackgroundColor3 = Theme.Accent}, 0.08):Play()
-        task.delay(0.08, function()
-            Tween(Btn, {BackgroundColor3 = Theme.ButtonHover}, 0.15):Play()
+        Tween(Btn, {BackgroundColor3 = Theme.Accent}, 0.05):Play()
+        task.delay(0.05, function()
+            Tween(Btn, {BackgroundColor3 = Theme.ButtonHover}, 0.1):Play()
         end)
         if callback then callback() end
     end)
@@ -384,35 +375,35 @@ function Library:AddToggle(tabData, text, default, callback)
 
     local Container = Instance.new("Frame")
     Container.Name = "Toggle_" .. text
-    Container.Size = UDim2.new(1, 0, 0, 34)
+    Container.Size = UDim2.new(1, 0, 0, 24)
     Container.BackgroundTransparency = 1
     Container.LayoutOrder = tabData.ElementOrder
     Container.Parent = parent
 
     local Label = MakeLabel({
-        Size = UDim2.new(1, -52, 1, 0),
+        Size = UDim2.new(1, -24, 1, 0),
         Text = text,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
     Label.Parent = Container
 
-    local Track = Instance.new("Frame")
-    Track.Name = "Track"
-    Track.Size = UDim2.new(0, 42, 0, 22)
-    Track.Position = UDim2.new(1, -42, 0.5, -11)
-    Track.BackgroundColor3 = toggled and Theme.SwitchOn or Theme.SwitchOff
-    Track.BorderSizePixel = 0
-    Track.Parent = Container
-    AddCorner(Track, 11)
+    local Box = Instance.new("Frame")
+    Box.Name = "Box"
+    Box.Size = UDim2.new(0, 16, 0, 16)
+    Box.Position = UDim2.new(1, -16, 0.5, -8)
+    Box.BackgroundColor3 = toggled and Theme.SwitchOn or Theme.Background
+    Box.BorderSizePixel = 1
+    Box.BorderColor3 = Theme.Border
+    Box.Parent = Container
 
-    local Knob = Instance.new("Frame")
-    Knob.Name = "Knob"
-    Knob.Size = UDim2.new(0, 18, 0, 18)
-    Knob.Position = toggled and UDim2.new(1, -20, 0.5, -9) or UDim2.new(0, 2, 0.5, -9)
-    Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Knob.BorderSizePixel = 0
-    Knob.Parent = Track
-    AddCorner(Knob, 9)
+    local Check = MakeLabel({
+        Size = UDim2.new(1, 0, 1, 0),
+        Text = toggled and "X" or "",
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextSize = 11,
+        Font = Enum.Font.Code,
+    })
+    Check.Parent = Box
 
     local Click = Instance.new("TextButton")
     Click.Size = UDim2.new(1, 0, 1, 0)
@@ -422,8 +413,8 @@ function Library:AddToggle(tabData, text, default, callback)
 
     Click.MouseButton1Click:Connect(function()
         toggled = not toggled
-        Tween(Track, {BackgroundColor3 = toggled and Theme.SwitchOn or Theme.SwitchOff}, 0.25):Play()
-        Tween(Knob, {Position = toggled and UDim2.new(1, -20, 0.5, -9) or UDim2.new(0, 2, 0.5, -9)}, 0.25):Play()
+        Box.BackgroundColor3 = toggled and Theme.SwitchOn or Theme.Background
+        Check.Text = toggled and "X" or ""
         if callback then callback(toggled) end
     end)
 
@@ -432,8 +423,8 @@ function Library:AddToggle(tabData, text, default, callback)
         Get = function() return toggled end,
         Set = function(v)
             toggled = v
-            Track.BackgroundColor3 = v and Theme.SwitchOn or Theme.SwitchOff
-            Knob.Position = v and UDim2.new(1, -20, 0.5, -9) or UDim2.new(0, 2, 0.5, -9)
+            Box.BackgroundColor3 = v and Theme.SwitchOn or Theme.Background
+            Check.Text = v and "X" or ""
         end,
     }
 end
@@ -446,36 +437,40 @@ function Library:AddSlider(tabData, text, min, max, default, callback)
 
     local Container = Instance.new("Frame")
     Container.Name = "Slider_" .. text
-    Container.Size = UDim2.new(1, 0, 0, 52)
+    Container.Size = UDim2.new(1, 0, 0, 32)
     Container.BackgroundTransparency = 1
     Container.LayoutOrder = tabData.ElementOrder
     Container.Parent = parent
 
+    local TopRow = Instance.new("Frame")
+    TopRow.Size = UDim2.new(1, 0, 0, 16)
+    TopRow.BackgroundTransparency = 1
+    TopRow.Parent = Container
+
     local Label = MakeLabel({
-        Size = UDim2.new(0.65, 0, 0, 20),
+        Size = UDim2.new(0.6, 0, 1, 0),
         Text = text,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
-    Label.Parent = Container
+    Label.Parent = TopRow
 
     local ValLabel = MakeLabel({
-        Size = UDim2.new(0.35, 0, 0, 20),
-        Position = UDim2.new(0.65, 0, 0, 0),
+        Size = UDim2.new(0.4, 0, 1, 0),
+        Position = UDim2.new(0.6, 0, 0, 0),
         Text = tostring(value),
-        TextColor3 = Theme.Accent,
+        TextColor3 = Theme.Text,
         TextXAlignment = Enum.TextXAlignment.Right,
         TextSize = SmallSize,
     })
-    ValLabel.Parent = Container
+    ValLabel.Parent = TopRow
 
     local Track = Instance.new("Frame")
     Track.Name = "Track"
     Track.Size = UDim2.new(1, 0, 0, 8)
-    Track.Position = UDim2.new(0, 0, 0, 30)
+    Track.Position = UDim2.new(0, 0, 0, 20)
     Track.BackgroundColor3 = Theme.SliderTrack
     Track.BorderSizePixel = 0
     Track.Parent = Container
-    AddCorner(Track, 4)
 
     local Fill = Instance.new("Frame")
     Fill.Name = "Fill"
@@ -484,26 +479,18 @@ function Library:AddSlider(tabData, text, min, max, default, callback)
     Fill.BackgroundColor3 = Theme.Accent
     Fill.BorderSizePixel = 0
     Fill.Parent = Track
-    AddCorner(Fill, 4)
 
     local Handle = Instance.new("Frame")
     Handle.Name = "Handle"
-    Handle.Size = UDim2.new(0, 16, 0, 16)
-    Handle.Position = UDim2.new(pct, -8, 0.5, -8)
-    Handle.BackgroundColor3 = Theme.Accent
+    Handle.Size = UDim2.new(0, 4, 0, 14)
+    Handle.Position = UDim2.new(pct, -2, 0, -3)
+    Handle.BackgroundColor3 = Theme.Text
     Handle.BorderSizePixel = 0
     Handle.Parent = Track
-    AddCorner(Handle, 8)
-
-    local Ring = Instance.new("UIStroke")
-    Ring.Color = Color3.fromRGB(255, 255, 255)
-    Ring.Thickness = 1.5
-    Ring.Transparency = 0.6
-    Ring.Parent = Handle
 
     local ClickArea = Instance.new("TextButton")
-    ClickArea.Size = UDim2.new(1, 0, 0, 26)
-    ClickArea.Position = UDim2.new(0, 0, 0, 22)
+    ClickArea.Size = UDim2.new(1, 0, 0, 18)
+    ClickArea.Position = UDim2.new(0, 0, 0, 15)
     ClickArea.BackgroundTransparency = 1
     ClickArea.Text = ""
     ClickArea.Parent = Container
@@ -513,7 +500,7 @@ function Library:AddSlider(tabData, text, min, max, default, callback)
         value = min + (max - min) * relX
         value = math.floor(value * 100 + 0.5) / 100
         Fill.Size = UDim2.new(relX, 0, 1, 0)
-        Handle.Position = UDim2.new(relX, -8, 0.5, -8)
+        Handle.Position = UDim2.new(relX, -2, 0, -3)
         ValLabel.Text = tostring(value)
         if callback then callback(value) end
     end
@@ -548,7 +535,7 @@ function Library:AddSlider(tabData, text, min, max, default, callback)
             value = math.clamp(v, min, max)
             local r = (value - min) / (max - min)
             Fill.Size = UDim2.new(r, 0, 1, 0)
-            Handle.Position = UDim2.new(r, -8, 0.5, -8)
+            Handle.Position = UDim2.new(r, -2, 0, -3)
             ValLabel.Text = tostring(value)
         end,
     }
@@ -562,7 +549,7 @@ function Library:AddDropdown(tabData, text, options, default, callback)
 
     local Container = Instance.new("Frame")
     Container.Name = "Dropdown_" .. text
-    Container.Size = UDim2.new(1, 0, 0, 34)
+    Container.Size = UDim2.new(1, 0, 0, 24)
     Container.BackgroundTransparency = 1
     Container.ClipsDescendants = false
     Container.LayoutOrder = tabData.ElementOrder
@@ -570,19 +557,19 @@ function Library:AddDropdown(tabData, text, options, default, callback)
 
     local Main = Instance.new("TextButton")
     Main.Name = "Main"
-    Main.Size = UDim2.new(1, 0, 0, 34)
+    Main.Size = UDim2.new(1, 0, 0, 24)
     Main.BackgroundColor3 = Theme.Dropdown
     Main.BorderSizePixel = 0
     Main.Text = ""
     Main.AutoButtonColor = false
     Main.ZIndex = 10
     Main.Parent = Container
-    AddCorner(Main)
+    AddStroke(Main, Theme.Border, 1)
 
     local Label = MakeLabel({
-        Size = UDim2.new(1, -32, 1, 0),
-        Position = UDim2.new(0, 12, 0, 0),
-        Text = text .. ":  " .. selected,
+        Size = UDim2.new(1, -20, 1, 0),
+        Position = UDim2.new(0, 6, 0, 0),
+        Text = text .. ": " .. selected,
         TextXAlignment = Enum.TextXAlignment.Left,
         TextSize = SmallSize,
     })
@@ -590,11 +577,11 @@ function Library:AddDropdown(tabData, text, options, default, callback)
     Label.Parent = Main
 
     local Arrow = MakeLabel({
-        Size = UDim2.new(0, 20, 0, 20),
-        Position = UDim2.new(1, -24, 0.5, -10),
-        Text = "\226\136\189",
+        Size = UDim2.new(0, 14, 0, 14),
+        Position = UDim2.new(1, -16, 0.5, -7),
+        Text = "+",
         TextColor3 = Theme.TextDim,
-        TextSize = TextSize,
+        TextSize = 10,
     })
     Arrow.ZIndex = 11
     Arrow.Parent = Main
@@ -602,25 +589,19 @@ function Library:AddDropdown(tabData, text, options, default, callback)
     local Options = Instance.new("Frame")
     Options.Name = "Options"
     Options.Size = UDim2.new(1, 0, 0, 0)
-    Options.Position = UDim2.new(0, 0, 1, 4)
+    Options.Position = UDim2.new(0, 0, 1, 1)
     Options.BackgroundColor3 = Theme.Dropdown
     Options.BorderSizePixel = 0
     Options.ClipsDescendants = true
     Options.Visible = false
     Options.ZIndex = 20
     Options.Parent = Container
-    AddCorner(Options)
     AddStroke(Options, Theme.Border, 1)
 
     local OptLayout = Instance.new("UIListLayout")
     OptLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    OptLayout.Padding = UDim.new(0, 2)
+    OptLayout.Padding = UDim.new(0, 0)
     OptLayout.Parent = Options
-
-    local OptPad = Instance.new("UIPadding")
-    OptPad.PaddingTop = UDim.new(0, 4)
-    OptPad.PaddingBottom = UDim.new(0, 4)
-    OptPad.Parent = Options
 
     local optionButtons = {}
 
@@ -632,15 +613,15 @@ function Library:AddDropdown(tabData, text, options, default, callback)
         for i, opt in ipairs(optList or {}) do
             local OptBtn = Instance.new("TextButton")
             OptBtn.Name = "Opt_" .. opt
-            OptBtn.Size = UDim2.new(1, -12, 0, 28)
-            OptBtn.Position = UDim2.new(0, 6, 0, 0)
-            OptBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            OptBtn.BackgroundTransparency = (opt == selected) and 0.85 or 1
+            OptBtn.Size = UDim2.new(1, 0, 0, 22)
+            OptBtn.BackgroundColor3 = (opt == selected) and Theme.SwitchOn or Color3.fromRGB(255, 255, 255)
+            OptBtn.BackgroundTransparency = (opt == selected) and 0.8 or 1
             OptBtn.BorderSizePixel = 0
-            OptBtn.Text = opt
-            OptBtn.TextColor3 = (opt == selected) and Theme.Accent or Theme.Text
+            OptBtn.Text = "  " .. opt
+            OptBtn.TextColor3 = (opt == selected) and Theme.Text or Theme.Text
             OptBtn.Font = Font
             OptBtn.TextSize = SmallSize
+            OptBtn.TextXAlignment = Enum.TextXAlignment.Left
             OptBtn.AutoButtonColor = false
             OptBtn.LayoutOrder = i
             OptBtn.ZIndex = 21
@@ -649,27 +630,29 @@ function Library:AddDropdown(tabData, text, options, default, callback)
 
             OptBtn.MouseEnter:Connect(function()
                 if opt ~= selected then
-                    Tween(OptBtn, {BackgroundTransparency = 0.88, BackgroundColor3 = Theme.DropdownHover}, 0.12):Play()
+                    OptBtn.BackgroundTransparency = 0.8
+                    OptBtn.BackgroundColor3 = Theme.DropdownHover
                 end
             end)
             OptBtn.MouseLeave:Connect(function()
                 if opt ~= selected then
-                    Tween(OptBtn, {BackgroundTransparency = 1, BackgroundColor3 = Color3.fromRGB(255, 255, 255)}, 0.12):Play()
+                    OptBtn.BackgroundTransparency = 1
+                    OptBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 end
             end)
 
             OptBtn.MouseButton1Click:Connect(function()
                 selected = opt
-                Label.Text = text .. ":  " .. selected
+                Label.Text = text .. ": " .. selected
                 for name, btn in pairs(optionButtons) do
                     local isSel = (name == selected)
-                    btn.TextColor3 = isSel and Theme.Accent or Theme.Text
-                    Tween(btn, {BackgroundTransparency = isSel and 0.85 or 1, BackgroundColor3 = isSel and Theme.Accent or Color3.fromRGB(255, 255, 255)}, 0.12):Play()
+                    btn.BackgroundTransparency = isSel and 0.8 or 1
+                    btn.BackgroundColor3 = isSel and Theme.SwitchOn or Color3.fromRGB(255, 255, 255)
                 end
                 isOpen = false
                 Options.Visible = false
-                Arrow.Text = "\226\136\189"
-                Tween(Container, {Size = UDim2.new(1, 0, 0, 34)}, 0.2):Play()
+                Arrow.Text = "+"
+                Tween(Container, {Size = UDim2.new(1, 0, 0, 24)}, 0.1):Play()
                 if callback then callback(selected) end
             end)
         end
@@ -682,15 +665,15 @@ function Library:AddDropdown(tabData, text, options, default, callback)
         isOpen = not isOpen
         if isOpen then
             Options.Visible = true
-            Arrow.Text = "\226\136\161"
+            Arrow.Text = "-"
             task.defer(function()
-                local targetH = 34 + Options.AbsoluteSize.Y + 6
-                Tween(Container, {Size = UDim2.new(1, 0, 0, targetH)}, 0.2):Play()
+                local targetH = 24 + Options.AbsoluteSize.Y + 1
+                Tween(Container, {Size = UDim2.new(1, 0, 0, targetH)}, 0.1):Play()
             end)
         else
-            Arrow.Text = "\226\136\189"
-            Tween(Container, {Size = UDim2.new(1, 0, 0, 34)}, 0.2):Play()
-            task.delay(0.2, function()
+            Arrow.Text = "+"
+            Tween(Container, {Size = UDim2.new(1, 0, 0, 24)}, 0.1):Play()
+            task.delay(0.1, function()
                 Options.Visible = false
             end)
         end
@@ -704,9 +687,9 @@ function Library:AddDropdown(tabData, text, options, default, callback)
             local siz = Container.AbsoluteSize
             if pos.X < abs.X or pos.X > abs.X + siz.X or pos.Y < abs.Y or pos.Y > abs.Y + siz.Y + 200 then
                 isOpen = false
-                Arrow.Text = "\226\136\189"
-                Tween(Container, {Size = UDim2.new(1, 0, 0, 34)}, 0.2):Play()
-                task.delay(0.2, function()
+                Arrow.Text = "+"
+                Tween(Container, {Size = UDim2.new(1, 0, 0, 24)}, 0.1):Play()
+                task.delay(0.1, function()
                     Options.Visible = false
                 end)
             end
@@ -722,11 +705,11 @@ function Library:AddDropdown(tabData, text, options, default, callback)
         Get = function() return selected end,
         Set = function(v)
             selected = v
-            Label.Text = text .. ":  " .. selected
+            Label.Text = text .. ": " .. selected
             for name, btn in pairs(optionButtons) do
                 local isSel = (name == selected)
-                btn.TextColor3 = isSel and Theme.Accent or Theme.Text
-                btn.BackgroundTransparency = isSel and 0.85 or 1
+                btn.BackgroundTransparency = isSel and 0.8 or 1
+                btn.BackgroundColor3 = isSel and Theme.SwitchOn or Color3.fromRGB(255, 255, 255)
             end
         end,
         Refresh = function(newOptions)
@@ -741,20 +724,19 @@ function Library:AddSection(tabData, text)
 
     local Container = Instance.new("Frame")
     Container.Name = "Section_" .. text
-    Container.Size = UDim2.new(1, 0, 0, 26)
+    Container.Size = UDim2.new(1, 0, 0, 20)
     Container.BackgroundColor3 = Theme.SectionBg
     Container.BorderSizePixel = 0
     Container.LayoutOrder = tabData.ElementOrder
     Container.Parent = parent
-    AddCorner(Container, 4)
 
     local Label = MakeLabel({
-        Size = UDim2.new(1, -16, 1, 0),
-        Position = UDim2.new(0, 10, 0, 0),
+        Size = UDim2.new(1, -8, 1, 0),
+        Position = UDim2.new(0, 4, 0, 0),
         Text = text:upper(),
         TextSize = 10,
         TextColor3 = Theme.TextDim,
-        Font = Enum.Font.GothamBold,
+        Font = Enum.Font.Code,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
     Label.Parent = Container
@@ -768,7 +750,7 @@ function Library:AddLabel(tabData, text)
 
     local Label = MakeLabel({
         Name = "Label_" .. text,
-        Size = UDim2.new(1, 0, 0, 18),
+        Size = UDim2.new(1, 0, 0, 16),
         Text = text,
         TextSize = SmallSize,
         TextColor3 = Theme.TextDim,
